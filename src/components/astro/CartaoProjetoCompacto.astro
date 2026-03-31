@@ -1,0 +1,37 @@
+---
+import { Icon } from '../react/Icon';
+import type { DadosCartaoProjeto } from '../../lib/projetos';
+
+interface Props {
+  projeto: DadosCartaoProjeto;
+}
+
+const { projeto } = Astro.props;
+---
+
+<article class="project-card project-card--compact">
+  <a class="project-card__image-link" href={projeto.href}>
+    <img class="project-card__image" src={projeto.capaSrc} alt={projeto.capaAlt} loading="lazy" />
+  </a>
+  <div class="project-card__body">
+    <div class="project-card__eyebrow">
+      <span class="category-pill category-pill--muted">
+        <Icon name={projeto.iconeCategoriaPrincipal} size={15} />
+        {projeto.categoriaPrincipalLabel}
+      </span>
+      <span class="project-card__date">{projeto.publicadoEmLabel}</span>
+    </div>
+    <h3><a href={projeto.href}>{projeto.titulo}</a></h3>
+    <p>{projeto.resumo}</p>
+    <div class="project-card__meta">
+      <span>
+        <Icon name="user" size={15} />
+        {projeto.nomeAutor}
+      </span>
+      <span>
+        <Icon name="clock" size={15} />
+        {projeto.duracaoLabel}
+      </span>
+    </div>
+  </div>
+</article>

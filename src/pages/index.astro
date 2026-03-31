@@ -1,0 +1,25 @@
+---
+import LayoutBase from '../layouts/LayoutBase.astro';
+import { VitrineProjetos } from '../components/react/VitrineProjetos';
+import { listarProjetosEmDestaque } from '../lib/projetos';
+import { comCaminhoBase } from '../lib/site';
+
+const projetosDestaque = await listarProjetosEmDestaque(4);
+const itensVitrine = projetosDestaque.map((projeto) => ({
+  titulo: projeto.titulo,
+  resumo: projeto.resumo,
+  href: projeto.href,
+  rotulosCategoria: projeto.categoriasLabel,
+  nomeAutor: projeto.nomeAutor,
+  imagemSrc: projeto.capaSrc,
+  imagemAlt: projeto.capaAlt
+}));
+---
+
+<LayoutBase
+  titulo="UDESC Maker | Plataforma colaborativa de projetos maker"
+  descricao="Descubra projetos maker publicados em Markdown, com fluxo colaborativo via GitHub e publicação automática no GitHub Pages."
+>
+  <VitrineProjetos client:load itens={itensVitrine} cenaSrc={comCaminhoBase('/hero-maker-scene.svg')} />
+
+</LayoutBase>

@@ -1,0 +1,23 @@
+---
+import LayoutBase from '../../layouts/LayoutBase.astro';
+import { ExplorarProjetos } from '../../components/react/ExplorarProjetos';
+import { listarProjetosBusca } from '../../lib/projetos';
+
+const textoApresentacao =
+  'Pesquise e descubra projetos maker para aprender, criar e compartilhar.';
+const buscaInicial = Astro.url.searchParams.get('busca') ?? Astro.url.searchParams.get('search') ?? '';
+const projetos = await listarProjetosBusca();
+---
+
+<LayoutBase
+  descricao={textoApresentacao}
+  buscaInicial={buscaInicial}
+  titulo="Explorar projetos | UDESC Maker"
+>
+  <section class="explore-hero">
+    <p class="explore-hero__eyebrow">{textoApresentacao}</p>
+    <h1>Explorar projetos</h1>
+  </section>
+
+  <ExplorarProjetos client:load buscaInicial={buscaInicial} projetos={projetos} />
+</LayoutBase>

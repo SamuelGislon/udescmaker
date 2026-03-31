@@ -1,0 +1,26 @@
+---
+import { Icon } from '../react/Icon';
+import type { DadosDetalheProjeto } from '../../lib/projetos';
+
+interface Props {
+  projeto: DadosDetalheProjeto;
+}
+
+const { projeto } = Astro.props;
+const itensMetadados = [
+  { icone: 'star', texto: `Idade mínima: ${projeto.idadeMinima}+` },
+  { icone: 'user', texto: `Autor: ${projeto.nomeAutor}` },
+  { icone: 'clock', texto: `Duração: ${projeto.duracaoLabel}` },
+  { icone: 'calendar', texto: `Data: ${projeto.publicadoEmLabel}` },
+  { icone: 'sparkles', texto: `Nível: ${projeto.dificuldadeLabel}` }
+] as const;
+---
+
+<ul class="project-meta-list">
+  {itensMetadados.map((item) => (
+    <li>
+      <Icon name={item.icone} size={16} />
+      <span>{item.texto}</span>
+    </li>
+  ))}
+</ul>

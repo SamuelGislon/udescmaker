@@ -1,0 +1,38 @@
+---
+import '../styles/global.css';
+import RodapeSite from '../components/astro/RodapeSite.astro';
+import CabecalhoSite from '../components/astro/CabecalhoSite.astro';
+import { comCaminhoBase } from '../lib/site';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+  buscaInicial?: string;
+}
+
+const {
+  titulo = 'UDESC Maker',
+  descricao = 'Projetos maker colaborativos organizados em Astro + React a partir de Markdown.',
+  buscaInicial = ''
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <link rel="icon" type="image/png" href={comCaminhoBase('/favicon_udesc_maker.png')} />
+  </head>
+  <body>
+    <div class="page-shell">
+      <CabecalhoSite buscaInicial={buscaInicial} />
+      <main class="page-shell__main">
+        <slot />
+      </main>
+      <RodapeSite />
+    </div>
+  </body>
+</html>

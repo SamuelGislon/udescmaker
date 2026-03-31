@@ -1,0 +1,15 @@
+---
+import { comCaminhoBase } from '../../lib/site';
+
+const srcLogo = comCaminhoBase('/logo.png');
+---
+
+<div class="brand-mark">
+  <img
+    class="brand-mark__image"
+    src={srcLogo}
+    alt="Logo UDESC Maker"
+    loading="eager"
+    decoding="async"
+  />
+</div>

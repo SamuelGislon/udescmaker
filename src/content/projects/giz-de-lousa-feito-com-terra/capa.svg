@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" fill="none">
+  <rect width="960" height="640" rx="32" fill="#F7F1E7" />
+  <rect x="46" y="44" width="868" height="552" rx="28" fill="#FBF8F2" stroke="#1A1A1A" stroke-opacity=".16" stroke-width="3" />
+  <rect x="86" y="102" width="560" height="360" rx="28" fill="#F9F7F2" stroke="#1A1A1A" stroke-opacity=".32" stroke-width="3" />
+  <ellipse cx="352" cy="314" rx="288" ry="52" fill="#D9DDE7" fill-opacity=".72" />
+  <g transform="translate(120 118) rotate(-26 200 120)">
+    <rect x="20" y="100" width="450" height="180" rx="90" fill="#B98961" stroke="#835D40" stroke-width="5" />
+    <rect x="396" y="100" width="74" height="180" rx="37" fill="#D5B08A" fill-opacity=".72" />
+    <path d="M448 134c34 10 52 48 40 82-12 36-44 58-74 52" stroke="#F4E7D9" stroke-width="7" stroke-linecap="round" />
+  </g>
+  <g transform="translate(620 264)">
+    <rect width="238" height="168" rx="20" fill="#F1EBDE" stroke="#1A1A1A" stroke-opacity=".45" stroke-width="3" />
+    <path d="M34 120 82 72l52 48H34Z" fill="#B98961" />
+    <path d="M34 44 82-4l52 48H34Z" fill="#8A5A38" />
+    <path d="M160 30h22m-11-12v24M160 102h22m-11-12v24" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" />
+    <rect x="176" y="24" width="34" height="96" rx="10" fill="#A9D7F8" stroke="#1A1A1A" stroke-opacity=".55" stroke-width="3" />
+    <path d="M193 0c12 10 18 30 18 48h-36c0-18 6-38 18-48Z" fill="#FFA135" />
+    <rect x="186" y="48" width="14" height="56" rx="7" fill="#F0A74F" />
+    <text x="182" y="87" fill="#274A61" font-family="Arial, sans-serif" font-size="14" font-weight="700">GLUE</text>
+  </g>
+</svg>

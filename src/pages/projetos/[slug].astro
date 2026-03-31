@@ -1,0 +1,173 @@
+---
+import { render } from 'astro:content';
+import LayoutBase from '../../layouts/LayoutBase.astro';
+import SecaoMarkdown from '../../components/astro/SecaoMarkdown.astro';
+import CartaoProjetoCompacto from '../../components/astro/CartaoProjetoCompacto.astro';
+import ListaMetadadosProjeto from '../../components/astro/ListaMetadadosProjeto.astro';
+import { GaleriaProjeto } from '../../components/react/GaleriaProjeto';
+import { Icon } from '../../components/react/Icon';
+import { buscarProjetoPorSlug, listarTodosProjetos } from '../../lib/projetos';
+import { comCaminhoBase } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const projetos = await listarTodosProjetos();
+
+  return projetos.map((projeto) => ({
+    params: { slug: projeto.slug }
+  }));
+}
+
+const slug = Astro.params.slug;
+const projeto = slug ? await buscarProjetoPorSlug(slug) : undefined;
+
+if (!projeto) {
+  throw new Error(`Projeto não encontrado para a rota: ${slug}`);
+}
+
+const { Content } = await render(projeto.entrada);
+const hrefProjetos = comCaminhoBase('/projetos/');
+const primeiroBaixavel = projeto.baixaveis[0];
+const temArquivosComplementares = projeto.baixaveis.length > 0 || projeto.arquivos.length > 0;
+const iconeDicaPorTom = {
+  info: 'lightbulb',
+  warning: 'alert',
+  success: 'sparkles'
+} as const;
+---
+
+<LayoutBase
+  descricao={projeto.resumo}
+  titulo={`${projeto.titulo} | UDESC Maker`}
+>
+  <div class="project-detail">
+    <a class="back-link" href={hrefProjetos}>
+      <Icon name="chevronLeft" size={18} />
+      Voltar para projetos
+    </a>
+
+    <section class="project-detail__hero">
+      <div class="project-detail__gallery">
+        <GaleriaProjeto client:load itens={projeto.galeria} />
+      </div>
+
+      <div class="project-detail__summary">
+        <h1>{projeto.titulo}</h1>
+        <p class="project-detail__lede">{projeto.resumo}</p>
+
+        <div class="project-detail__chips">
+          {projeto.categoriasLabel.map((rotuloCategoria) => (
+            <span class="category-pill">{rotuloCategoria}</span>
+          ))}
+        </div>
+
+        <div class="project-detail__tags">
+          {projeto.tags.map((tag) => (
+            <span class="tag-chip">#{tag}</span>
+          ))}
+        </div>
+
+        <ListaMetadadosProjeto projeto={projeto} />
+
+        <div class="project-detail__actions">
+          {primeiroBaixavel ? (
+            <a class="button button--cta" href={primeiroBaixavel.url}>
+              <Icon name="download" size={18} />
+              Baixar PDF
+            </a>
+          ) : null}
+          {projeto.arquivos.length > 0 ? (
+            <a class="button button--ghost" href="#arquivos-complementares">
+              <Icon name="folder" size={18} />
+              Ver arquivos
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </section>
+
+    <section class="project-detail__body">
+      <div class="project-detail__main-column">
+        <SecaoMarkdown titulo="Sobre o projeto">
+          <div class="prose">
+            <Content />
+          </div>
+        </SecaoMarkdown>
+
+        <SecaoMarkdown titulo="Materiais">
+          <ul class="bullet-list">
+            {projeto.materiais.map((material) => (
+              <li>{material}</li>
+            ))}
+          </ul>
+        </SecaoMarkdown>
+
+        <SecaoMarkdown titulo="Ferramentas">
+          <ul class="bullet-list">
+            {projeto.ferramentas.map((ferramenta) => (
+              <li>{ferramenta}</li>
+            ))}
+          </ul>
+        </SecaoMarkdown>
+      </div>
+
+      <div class="project-detail__side-column">
+        <SecaoMarkdown titulo="Passo a passo">
+          <div class="steps-list">
+            {projeto.passos.map((passo, indice) => (
+              <article class="step-card">
+                <div class="step-card__index">{String(indice + 1).padStart(2, '0')}</div>
+                <div class="step-card__content">
+                  <h3>{passo.titulo}</h3>
+                  <p>{passo.corpo}</p>
+                </div>
+                {passo.imagem ? <img class="step-card__image" src={passo.imagem} alt={passo.titulo} /> : null}
+              </article>
+            ))}
+          </div>
+        </SecaoMarkdown>
+
+        <SecaoMarkdown titulo="Dicas e cuidados">
+          <div class="tips-list">
+            {projeto.dicas.map((dica) => (
+              <article class={`tip-card tip-card--${dica.tom}`}>
+                <Icon name={iconeDicaPorTom[dica.tom]} size={18} />
+                <p>{dica.texto}</p>
+              </article>
+            ))}
+          </div>
+        </SecaoMarkdown>
+
+        {temArquivosComplementares ? (
+          <SecaoMarkdown
+            id="arquivos-complementares"
+            titulo="Arquivos complementares"
+            introducao="Baixe moldes, manuais, modelos 3D ou outros anexos enviados junto com o projeto."
+          >
+            <div class="file-grid">
+              {projeto.baixaveis.map((item) => (
+                <a class="file-chip" href={item.url}>
+                  <span class="file-chip__badge">{item.tipo.toUpperCase()}</span>
+                  <strong>{item.rotulo}</strong>
+                </a>
+              ))}
+              {projeto.arquivos.map((item) => (
+                <a class="file-chip" href={item.url}>
+                  <span class="file-chip__badge">{item.tipo.toUpperCase()}</span>
+                  <strong>{item.rotulo}</strong>
+                </a>
+              ))}
+            </div>
+          </SecaoMarkdown>
+        ) : null}
+
+        <SecaoMarkdown titulo="Projetos relacionados">
+          <div class="related-grid">
+            {projeto.projetosRelacionados.map((projetoRelacionado) => (
+              <CartaoProjetoCompacto projeto={projetoRelacionado} />
+            ))}
+          </div>
+        </SecaoMarkdown>
+      </div>
+    </section>
+  </div>
+</LayoutBase>

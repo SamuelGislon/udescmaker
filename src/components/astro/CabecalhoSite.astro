@@ -1,0 +1,29 @@
+---
+import MarcaSite from './MarcaSite.astro';
+import BarraBusca from './BarraBusca.astro';
+import { comCaminhoBase } from '../../lib/site';
+
+interface Props {
+  buscaInicial?: string;
+}
+
+const { buscaInicial = '' } = Astro.props;
+const hrefInicio = comCaminhoBase('/');
+const hrefProjetos = comCaminhoBase('/projetos/');
+---
+
+<header class="site-header">
+  <a class="site-header__brand" href={hrefInicio}>
+    <MarcaSite />
+  </a>
+  <BarraBusca
+    hrefAcao={hrefProjetos}
+    rotuloAcao="Explorar Projetos"
+    valorInicial={buscaInicial}
+    placeholder="Busque projetos maker"
+  />
+</header>
+<div class="header-divider" aria-hidden="true">
+  <span class="header-divider__scissor">✂</span>
+  <span class="header-divider__line"></span>
+</div>

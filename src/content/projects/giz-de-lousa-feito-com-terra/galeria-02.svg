@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" fill="none">
+  <rect width="960" height="640" rx="32" fill="#F6F2E8" />
+  <rect x="92" y="116" width="776" height="404" rx="26" fill="#F2E6D5" stroke="#1A1A1A" stroke-opacity=".22" stroke-width="3" />
+  <rect x="148" y="182" width="664" height="272" rx="18" fill="#FFFDF9" stroke="#1A1A1A" stroke-opacity=".28" stroke-width="3" />
+  <g transform="translate(224 252) rotate(-18 80 30)">
+    <rect x="0" y="0" width="180" height="56" rx="28" fill="#C1926B" stroke="#815B3D" stroke-width="4" />
+    <rect x="142" y="0" width="38" height="56" rx="19" fill="#D7B38E" fill-opacity=".72" />
+  </g>
+  <g transform="translate(418 260) rotate(-10 76 30)">
+    <rect x="0" y="0" width="168" height="56" rx="28" fill="#B98961" stroke="#815B3D" stroke-width="4" />
+    <rect x="130" y="0" width="38" height="56" rx="19" fill="#D7B38E" fill-opacity=".72" />
+  </g>
+  <g transform="translate(608 268) rotate(8 72 30)">
+    <rect x="0" y="0" width="160" height="56" rx="28" fill="#AE7F58" stroke="#815B3D" stroke-width="4" />
+    <rect x="122" y="0" width="38" height="56" rx="19" fill="#D7B38E" fill-opacity=".72" />
+  </g>
+  <path d="M174 470h612" stroke="#8F7D66" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 14" />
+</svg>

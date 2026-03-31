@@ -1,0 +1,40 @@
+---
+import { Icon } from '../react/Icon';
+import { comCaminhoBase } from '../../lib/site';
+
+interface Props {
+  valorInicial?: string;
+  placeholder?: string;
+  hrefAcao?: string;
+  rotuloAcao?: string;
+}
+
+const {
+  valorInicial = '',
+  placeholder = 'Busque projetos maker',
+  hrefAcao = comCaminhoBase('/projetos/'),
+  rotuloAcao = 'Projetos'
+} = Astro.props;
+---
+
+<form action={hrefAcao} class="searchbar" method="get" role="search">
+  <label class="searchbar__field">
+    <span class="searchbar__icon">
+      <Icon name="search" size={18} />
+    </span>
+    <input
+      aria-label="Buscar projetos maker"
+      name="busca"
+      placeholder={placeholder}
+      type="search"
+      value={valorInicial}
+    />
+  </label>
+
+  <button class="button button--cta searchbar__action" type="submit">
+    <span class="button__icon">
+      <Icon name="compass" size={18} />
+    </span>
+    {rotuloAcao}
+  </button>
+</form>
