@@ -4,7 +4,7 @@ import { VitrineProjetos } from '../components/react/VitrineProjetos';
 import { listarProjetosEmDestaque } from '../lib/projetos';
 import { comCaminhoBase } from '../lib/site';
 
-const projetosDestaque = await listarProjetosEmDestaque(4);
+const projetosDestaque = (await listarProjetosEmDestaque()).slice(0, 6);
 const itensVitrine = projetosDestaque.map((projeto) => ({
   titulo: projeto.titulo,
   resumo: projeto.resumo,

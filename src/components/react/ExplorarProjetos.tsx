@@ -61,6 +61,8 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
   const [filtrosRascunho, setFiltrosRascunho] = useState<EstadoFiltros>(estadoInicial);
   const [filtrosAplicados, setFiltrosAplicados] = useState<EstadoFiltros>(estadoInicial);
   const [quantidadeVisivel, setQuantidadeVisivel] = useState(RESULTADOS_POR_LOTE);
+  const [mostrarTodasCategorias, setMostrarTodasCategorias] = useState(false);
+
   const buscaDiferida = useDeferredValue(filtrosAplicados.textoBusca);
 
   const buscador = new Fuse(projetos, {
@@ -123,6 +125,10 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
   const haMais = quantidadeVisivel < projetosFiltrados.length;
   const totalResultadosLabel = formatarTotalResultados(projetosFiltrados.length);
 
+  const categoriasVisiveis = mostrarTodasCategorias
+    ? OPCOES_CATEGORIA
+    : OPCOES_CATEGORIA.slice(0, 6);
+
   function aplicarFiltros() {
     startTransition(() => {
       setFiltrosAplicados(filtrosRascunho);
@@ -180,83 +186,9 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
         </div>
 
         <div className="filters-panel__group">
-          <h3>Idade mínima</h3>
-          <div className="choice-row">
-            <button
-              className={`choice-chip ${filtrosRascunho.idadeMinima === null ? 'is-active' : ''}`}
-              onClick={() => setFiltrosRascunho((atual) => ({ ...atual, idadeMinima: null }))}
-              type="button"
-            >
-              Todas
-            </button>
-            {OPCOES_IDADE.map((idade) => (
-              <button
-                className={`choice-chip ${filtrosRascunho.idadeMinima === idade ? 'is-active' : ''}`}
-                key={idade}
-                onClick={() => setFiltrosRascunho((atual) => ({ ...atual, idadeMinima: idade }))}
-                type="button"
-              >
-                {idade}+
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="filters-panel__group">
-          <h3>Nível de dificuldade</h3>
-          <div className="choice-grid">
-            {OPCOES_DIFICULDADE.map((dificuldade) => (
-              <button
-                className={`choice-chip choice-chip--wide ${
-                  filtrosRascunho.dificuldades.includes(dificuldade.id) ? 'is-active' : ''
-                }`}
-                key={dificuldade.id}
-                onClick={() =>
-                  setFiltrosRascunho((atual) => ({
-                    ...atual,
-                    dificuldades: alternarItemLista(atual.dificuldades, dificuldade.id)
-                  }))
-                }
-                type="button"
-              >
-                {dificuldade.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="filters-panel__group">
-          <h3>Tempo necessário</h3>
-          <div className="radio-list">
-            {OPCOES_DURACAO.map((duracao) => (
-              <label className="radio-list__item" key={duracao.id}>
-                <input
-                  checked={filtrosRascunho.duracao === duracao.id}
-                  name="duracao"
-                  onChange={() =>
-                    setFiltrosRascunho((atual) => ({ ...atual, duracao: duracao.id }))
-                  }
-                  type="radio"
-                />
-                <span>{duracao.label}</span>
-              </label>
-            ))}
-            <label className="radio-list__item">
-              <input
-                checked={filtrosRascunho.duracao === null}
-                name="duracao"
-                onChange={() => setFiltrosRascunho((atual) => ({ ...atual, duracao: null }))}
-                type="radio"
-              />
-              <span>Qualquer duração</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="filters-panel__group">
           <h3>Categorias</h3>
           <div className="choice-grid choice-grid--categories">
-            {OPCOES_CATEGORIA.map((categoria) => (
+            {categoriasVisiveis.map((categoria) => (
               <button
                 className={`choice-chip choice-chip--wide ${
                   filtrosRascunho.categorias.includes(categoria.id) ? 'is-active' : ''
@@ -275,6 +207,21 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
               </button>
             ))}
           </div>
+
+          <button
+            type="button"
+            style={{
+              marginTop: '10px',
+              background: 'none',
+              border: 'none',
+              color: '#1f7a4c',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+            onClick={() => setMostrarTodasCategorias((prev) => !prev)}
+          >
+            {mostrarTodasCategorias ? 'Ver menos categorias' : 'Ver mais categorias'}
+          </button>
         </div>
 
         <div className="filters-panel__actions">
@@ -290,63 +237,13 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
       <section className="results-panel">
         <div className="results-panel__topbar">
           <p>{totalResultadosLabel}</p>
-          <label className="results-panel__sort">
-            <span>Ordenar por</span>
-            <select
-              onChange={(event) => {
-                const ordenarPor = event.target.value as OpcaoOrdenacao;
-
-                startTransition(() => {
-                  setFiltrosRascunho((atual) => ({
-                    ...atual,
-                    ordenarPor
-                  }));
-                  setFiltrosAplicados((atual) => ({
-                    ...atual,
-                    ordenarPor
-                  }));
-                });
-              }}
-              value={filtrosRascunho.ordenarPor}
-            >
-              {OPCOES_ORDENACAO.map((opcao) => (
-                <option key={opcao.id} value={opcao.id}>
-                  {opcao.label}
-                </option>
-              ))}
-            </select>
-          </label>
         </div>
 
-        {projetosVisiveis.length > 0 ? (
-          <>
-            <div className="project-grid project-grid--explore">
-              {projetosVisiveis.map((projeto) => (
-                <CartaoProjeto key={projeto.slug} projeto={projeto} />
-              ))}
-            </div>
-            <div className="results-panel__footer">
-              {haMais ? (
-                <button
-                  className="button button--cta"
-                  onClick={() => {
-                    startTransition(() => {
-                      setQuantidadeVisivel((quantidadeAtual) => quantidadeAtual + RESULTADOS_POR_LOTE);
-                    });
-                  }}
-                  type="button"
-                >
-                  Carregar mais
-                </button>
-              ) : null}
-            </div>
-          </>
-        ) : (
-          <div className="empty-state">
-            <strong>Nenhum projeto encontrado com os filtros atuais.</strong>
-            <p>Ajuste a busca, remova algumas categorias ou limpe os filtros para tentar de novo.</p>
-          </div>
-        )}
+        <div className="project-grid project-grid--explore">
+          {projetosVisiveis.map((projeto) => (
+            <CartaoProjeto key={projeto.slug} projeto={projeto} />
+          ))}
+        </div>
       </section>
     </div>
   );
