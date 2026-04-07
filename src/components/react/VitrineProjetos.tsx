@@ -18,12 +18,14 @@ interface VitrineProjetosProps {
 
 export function VitrineProjetos({ itens, cenaSrc }: VitrineProjetosProps) {
   const [indiceAtivo, setIndiceAtivo] = useState(0);
-  const [quantidadeCategoriasVisiveis, setQuantidadeCategoriasVisiveis] = useState(2);
+  const [quantidadeCategoriasVisiveis, setQuantidadeCategoriasVisiveis] = useState(1);
   const categoriasRef = useRef<HTMLDivElement | null>(null);
   const medidorCategoriasRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (itens.length <= 1) return;
+    if (itens.length <= 1) {
+      return undefined;
+    }
 
     const idIntervalo = window.setInterval(() => {
       startTransition(() => {
@@ -34,7 +36,9 @@ export function VitrineProjetos({ itens, cenaSrc }: VitrineProjetosProps) {
     return () => window.clearInterval(idIntervalo);
   }, [itens.length]);
 
-  if (itens.length === 0) return null;
+  if (itens.length === 0) {
+    return null;
+  }
 
   const itemAtivo = itens[indiceAtivo];
   const temImagem = Boolean(itemAtivo.imagemSrc);
@@ -42,9 +46,9 @@ export function VitrineProjetos({ itens, cenaSrc }: VitrineProjetosProps) {
   const categoriasVisiveis = rotulosCategoria.slice(0, quantidadeCategoriasVisiveis);
 
   useEffect(() => {
-    if (rotulosCategoria.length <= 2) {
+    if (rotulosCategoria.length <= 1) {
       setQuantidadeCategoriasVisiveis(rotulosCategoria.length || 1);
-      return;
+      return undefined;
     }
 
     let cancelado = false;
@@ -53,21 +57,33 @@ export function VitrineProjetos({ itens, cenaSrc }: VitrineProjetosProps) {
       const container = categoriasRef.current;
       const medidor = medidorCategoriasRef.current;
 
-      if (!container || !medidor) return;
+      if (!container || !medidor) {
+        return;
+      }
 
       const larguraDisponivel = container.clientWidth;
       const categoriasMedidas = Array.from(medidor.children) as HTMLElement[];
+
+      if (larguraDisponivel <= 0 || categoriasMedidas.length === 0) {
+        return;
+      }
+
+      const estilos = window.getComputedStyle(medidor);
+      const gap = Number.parseFloat(estilos.columnGap || estilos.gap || '0');
 
       let larguraAcumulada = 0;
       let visiveis = 0;
 
       for (const categoria of categoriasMedidas) {
-        const largura = categoria.getBoundingClientRect().width + 8;
+        const larguraCategoria = categoria.getBoundingClientRect().width;
+        const larguraTotal = larguraCategoria + (visiveis > 0 ? gap : 0);
 
-        if (larguraAcumulada + largura > larguraDisponivel) break;
+        if (visiveis > 0 && larguraAcumulada + larguraTotal > larguraDisponivel) {
+          break;
+        }
 
-        larguraAcumulada += largura;
-        visiveis++;
+        larguraAcumulada += larguraTotal;
+        visiveis += 1;
       }
 
       if (!cancelado) {
@@ -78,7 +94,14 @@ export function VitrineProjetos({ itens, cenaSrc }: VitrineProjetosProps) {
     recalcularCategoriasVisiveis();
 
     const observer = new ResizeObserver(recalcularCategoriasVisiveis);
-    if (categoriasRef.current) observer.observe(categoriasRef.current);
+
+    if (categoriasRef.current) {
+      observer.observe(categoriasRef.current);
+    }
+
+    document.fonts?.ready.then(() => {
+      recalcularCategoriasVisiveis();
+    });
 
     return () => {
       cancelado = true;
@@ -87,140 +110,114 @@ export function VitrineProjetos({ itens, cenaSrc }: VitrineProjetosProps) {
   }, [rotulosCategoria]);
 
   function irPara(indice: number) {
-    startTransition(() => setIndiceAtivo(indice));
+    startTransition(() => {
+      setIndiceAtivo(indice);
+    });
   }
 
   return (
-    <section className="hero-showcase" style={{ padding: '40px 0' }}>
+    <section className="hero-showcase">
       <div className="hero-showcase__media">
         <div className="hero-showcase__frame">
-          <img
-            className="hero-showcase__scene"
-            src={cenaSrc}
-            alt=""
-            aria-hidden="true"
-            style={{ borderRadius: '16px' }}
-          />
+          <img className="hero-showcase__scene" src={cenaSrc} alt="" aria-hidden="true" />
         </div>
       </div>
 
       <div className="hero-showcase__content">
-        <h2 style={{ fontSize: '28px', marginBottom: '12px' }}>
-          Ninguém aprende nada sozinho. O <span style={{ color: '#ae2726' }}>UDESC</span>{' '}
-          <span style={{ color: '#134829' }}>Maker</span> nasce para trocar experiências.
-        </h2>
-
-        <p style={{ marginBottom: '20px', opacity: 0.8 }}>
-          Explore projetos feitos por estudantes, professores e pela comunidade.
-        </p>
-
+        <div className="hero-showcase__intro">
+          <h2 className="hero-showcase__title">
+            Ninguém aprende nada sozinho. O <span style={{ color: '#ae2726' }}>UDESC</span>{' '}
+            <span style={{ color: '#134829' }}>Maker</span> nasce para trocar experiências.
+          </h2>
+          <p className="hero-showcase__description">
+            Explore projetos feitos por estudantes, professores e pela comunidade. Inspire seu
+            espírito criativo para juntos construirmos um futuro mais inovador e colaborativo.
+          </p>
+        </div>
         <div className="hero-showcase__highlight-block">
           <div
             className={`hero-showcase__highlight ${
               temImagem ? 'hero-showcase__highlight--with-image' : ''
             }`}
-            style={{
-              background: '#fff',
-              borderRadius: '20px',
-              padding: '16px',
-              boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
-            }}
           >
-            {temImagem && (
+            {temImagem ? (
               <div className="hero-showcase__highlight-media">
                 <img
                   src={itemAtivo.imagemSrc}
                   alt={itemAtivo.imagemAlt ?? itemAtivo.titulo}
-                  style={{
-                    width: '100%',
-                    height: '160px',
-                    objectFit: 'cover',
-                    borderRadius: '12px',
-                  }}
+                  loading="lazy"
                 />
               </div>
-            )}
-
+            ) : null}
             <div className="hero-showcase__highlight-main">
-              <div
-                className="hero-showcase__highlight-categories"
-                ref={categoriasRef}
-                style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}
-              >
+              <div className="hero-showcase__highlight-categories" ref={categoriasRef}>
                 {categoriasVisiveis.map((rotuloCategoria) => (
-                  <span
-                    key={rotuloCategoria}
-                    style={{
-                      background: '#e6f4ea',
-                      color: '#134829',
-                      padding: '4px 10px',
-                      borderRadius: '999px',
-                      fontSize: '12px',
-                    }}
-                  >
+                  <span className="category-pill category-pill--muted" key={rotuloCategoria}>
+                    <Icon name="book" size={15} />
                     {rotuloCategoria}
                   </span>
                 ))}
               </div>
-
               <div
                 aria-hidden="true"
+                className="hero-showcase__highlight-categories hero-showcase__highlight-categories--measure"
                 ref={medidorCategoriasRef}
-                style={{ position: 'absolute', visibility: 'hidden' }}
               >
                 {rotulosCategoria.map((rotuloCategoria) => (
-                  <span key={rotuloCategoria}>{rotuloCategoria}</span>
+                  <span className="category-pill category-pill--muted" key={rotuloCategoria}>
+                    <Icon name="book" size={15} />
+                    {rotuloCategoria}
+                  </span>
                 ))}
               </div>
-
-              <p>
-                <strong style={{ fontSize: '16px' }}>{itemAtivo.titulo}</strong>
-                <br />
-                <span style={{ fontSize: '14px', opacity: 0.7 }}>
+              <p className="hero-showcase__highlight-copy">
+                <strong className="hero-showcase__highlight-title" title={itemAtivo.titulo}>
+                  {itemAtivo.titulo}
+                </strong>
+                <span className="hero-showcase__highlight-summary" title={itemAtivo.resumo}>
                   {itemAtivo.resumo}
                 </span>
               </p>
-
-              <div style={{ marginTop: '12px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <a
-                  href={itemAtivo.href}
-                  style={{
-                    background: '#1f7a4c',
-                    color: '#fff',
-                    padding: '8px 14px',
-                    borderRadius: '10px',
-                    textDecoration: 'none',
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  Ver projeto
-                  <Icon name="arrowRight" size={16} />
+              <div className="hero-showcase__actions">
+                <a className="button button--cta" href={itemAtivo.href}>
+                  Ver projeto destaque
+                  <Icon name="arrowRight" size={18} />
                 </a>
-
-                <span style={{ fontSize: '13px', opacity: 0.6 }}>
-                  {itemAtivo.nomeAutor}
+                <span className="hero-showcase__author">
+                  <Icon name="user" size={16} />
+                  Autor(a): {itemAtivo.nomeAutor}
                 </span>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="hero-showcase__controls" style={{ marginTop: '20px' }}>
-          <button onClick={() => irPara((indiceAtivo - 1 + itens.length) % itens.length)}>
-            <Icon name="chevronLeft" />
+        <div className="hero-showcase__controls">
+          <button
+            aria-label="Projeto anterior"
+            className="hero-showcase__control"
+            onClick={() => irPara((indiceAtivo - 1 + itens.length) % itens.length)}
+            type="button"
+          >
+            <Icon name="chevronLeft" size={20} />
           </button>
-
-          {itens.map((_, i) => (
-            <button key={i} onClick={() => irPara(i)}>
-              •
-            </button>
-          ))}
-
-          <button onClick={() => irPara((indiceAtivo + 1) % itens.length)}>
-            <Icon name="chevronRight" />
+          <div className="hero-showcase__dots">
+            {itens.map((item, indice) => (
+              <button
+                aria-label={`Ir para ${item.titulo}`}
+                className={`hero-showcase__dot ${indice === indiceAtivo ? 'is-active' : ''}`}
+                key={item.href}
+                onClick={() => irPara(indice)}
+                type="button"
+              />
+            ))}
+          </div>
+          <button
+            aria-label="Próximo projeto"
+            className="hero-showcase__control"
+            onClick={() => irPara((indiceAtivo + 1) % itens.length)}
+            type="button"
+          >
+            <Icon name="chevronRight" size={20} />
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { DadosBuscaProjeto } from '../../lib/projetos';
+import { MAPA_CATEGORIA } from '../../data/taxonomia';
 import { Icon } from './Icon';
 
 interface CartaoProjetoProps {
@@ -13,10 +14,14 @@ export function CartaoProjeto({ projeto }: CartaoProjetoProps) {
       </a>
       <div className="project-card__body">
         <div className="project-card__eyebrow project-card__eyebrow--stacked">
-          <span className="category-pill category-pill--muted">
-            <Icon name={projeto.iconeCategoriaPrincipal} size={15} />
-            {projeto.categoriaPrincipalLabel}
-          </span>
+          <div className="project-card__categories" aria-label="Categorias do projeto">
+            {projeto.categorias.map((categoria) => (
+              <span className="category-pill category-pill--muted" key={categoria}>
+                <Icon name={MAPA_CATEGORIA[categoria].icon} size={15} />
+                {MAPA_CATEGORIA[categoria].label}
+              </span>
+            ))}
+          </div>
           <span className="category-pill category-pill--muted">
             <Icon name="sparkles" size={15} />
             {projeto.dificuldadeLabel}
@@ -40,7 +45,7 @@ export function CartaoProjeto({ projeto }: CartaoProjetoProps) {
             </span>
           </div>
           <a className="button button--cta project-card__button" href={projeto.href}>
-            Ver projeto
+            Ver Projeto
           </a>
         </div>
       </div>

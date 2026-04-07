@@ -1,5 +1,6 @@
 ---
 import { Icon } from '../react/Icon';
+import { MAPA_CATEGORIA } from '../../data/taxonomia';
 import type { DadosCartaoProjeto } from '../../lib/projetos';
 
 interface Props {
@@ -14,24 +15,35 @@ const { projeto } = Astro.props;
     <img class="project-card__image" src={projeto.capaSrc} alt={projeto.capaAlt} loading="lazy" />
   </a>
   <div class="project-card__body">
-    <div class="project-card__eyebrow">
-      <span class="category-pill category-pill--muted">
-        <Icon name={projeto.iconeCategoriaPrincipal} size={15} />
-        {projeto.categoriaPrincipalLabel}
-      </span>
+    <div class="project-card__eyebrow project-card__eyebrow--stacked">
+      <div class="project-card__categories" aria-label="Categorias do projeto">
+        {projeto.categorias.map((categoria) => (
+          <span class="category-pill category-pill--muted">
+            <Icon name={MAPA_CATEGORIA[categoria].icon} size={15} />
+            {MAPA_CATEGORIA[categoria].label}
+          </span>
+        ))}
+      </div>
       <span class="project-card__date">{projeto.publicadoEmLabel}</span>
     </div>
-    <h3><a href={projeto.href}>{projeto.titulo}</a></h3>
-    <p>{projeto.resumo}</p>
-    <div class="project-card__meta">
-      <span>
-        <Icon name="user" size={15} />
-        {projeto.nomeAutor}
-      </span>
-      <span>
-        <Icon name="clock" size={15} />
-        {projeto.duracaoLabel}
-      </span>
+    <div class="project-card__content">
+      <h3><a href={projeto.href}>{projeto.titulo}</a></h3>
+      <p>{projeto.resumo}</p>
+    </div>
+    <div class="project-card__footer">
+      <div class="project-card__meta">
+        <span>
+          <Icon name="user" size={15} />
+          {projeto.nomeAutor}
+        </span>
+        <span>
+          <Icon name="clock" size={15} />
+          {projeto.duracaoLabel}
+        </span>
+      </div>
+      <a class="button button--cta project-card__button" href={projeto.href}>
+        Ver Projeto
+      </a>
     </div>
   </div>
 </article>

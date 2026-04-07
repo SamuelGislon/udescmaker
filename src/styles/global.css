@@ -261,6 +261,9 @@ code {
 }
 
 .project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border: 1.5px solid rgba(15, 92, 59, 0.35);
   border-radius: var(--radius-md);
   background: linear-gradient(180deg, rgba(223, 244, 227, 0.85) 0%, rgba(240, 249, 242, 0.92) 100%);
@@ -285,7 +288,9 @@ code {
 .project-card__body {
   padding: 1rem 1rem 1.15rem;
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 0.9rem;
+  flex: 1;
 }
 
 .project-card__eyebrow {
@@ -296,8 +301,22 @@ code {
 }
 
 .project-card__date {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
   font-size: 0.92rem;
   color: var(--muted);
+}
+
+.project-card__categories {
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  min-width: 0;
+  max-height: 4.65rem;
+  overflow: hidden;
+  align-content: flex-start;
 }
 
 .project-card h3 {
@@ -375,6 +394,7 @@ code {
 
 .hero-showcase__media {
   display: flex;
+  height: 100%;
 }
 
 .hero-showcase__frame {
@@ -398,10 +418,29 @@ code {
 
 .hero-showcase__content {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
-  gap: 1.25rem;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 1.05rem;
+  height: 100%;
   min-height: 100%;
   align-content: stretch;
+}
+
+.hero-showcase__intro {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.hero-showcase__title,
+.hero-showcase__description {
+  margin: 0;
+}
+
+.hero-showcase__title {
+  line-height: 1.5;
+}
+
+.hero-showcase__description {
+  line-height: 1.85;
 }
 
 .explore-hero__eyebrow {
@@ -439,6 +478,7 @@ code {
   display: grid;
   gap: 0.65rem;
   align-self: stretch;
+  min-height: 0;
 }
 
 .hero-showcase__section-title {
@@ -599,6 +639,10 @@ code {
   gap: 1.5rem;
 }
 
+.project-grid--home {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .project-grid--explore {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -616,11 +660,13 @@ code {
 .project-card__content {
   display: grid;
   gap: 0.7rem;
+  min-height: 0;
 }
 
 .project-card__footer {
   display: grid;
   gap: 1rem;
+  align-content: end;
 }
 
 .project-card__button {

@@ -1,10 +1,13 @@
 ---
 import LayoutBase from '../layouts/LayoutBase.astro';
+import CartaoProjetoCompacto from '../components/astro/CartaoProjetoCompacto.astro';
+import SecaoMarkdown from '../components/astro/SecaoMarkdown.astro';
 import { VitrineProjetos } from '../components/react/VitrineProjetos';
-import { listarProjetosEmDestaque } from '../lib/projetos';
+import { listarProjetosEmDestaque, listarTodosProjetos } from '../lib/projetos';
 import { comCaminhoBase } from '../lib/site';
 
-const projetosDestaque = (await listarProjetosEmDestaque()).slice(0, 6);
+const projetosDestaque = await listarProjetosEmDestaque(4);
+const ultimosProjetos = (await listarTodosProjetos()).slice(0, 6);
 const itensVitrine = projetosDestaque.map((projeto) => ({
   titulo: projeto.titulo,
   resumo: projeto.resumo,
@@ -21,5 +24,11 @@ const itensVitrine = projetosDestaque.map((projeto) => ({
   descricao="Descubra projetos maker publicados em Markdown, com fluxo colaborativo via GitHub e publicação automática no GitHub Pages."
 >
   <VitrineProjetos client:load itens={itensVitrine} cenaSrc={comCaminhoBase('/hero-maker-scene.svg')} />
-
+  <SecaoMarkdown id="ultimos-projetos" titulo="Últimos Projetos">
+    <div class="project-grid project-grid--home">
+      {ultimosProjetos.map((projeto) => (
+        <CartaoProjetoCompacto projeto={projeto} />
+      ))}
+    </div>
+  </SecaoMarkdown>
 </LayoutBase>
