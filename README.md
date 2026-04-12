@@ -12,7 +12,10 @@ Plataforma web de projetos maker construída com Astro + React, publicada no Git
 
 ## Rodando localmente
 
+Os comandos abaixo devem ser executados dentro da pasta `udescmaker/`:
+
 ```bash
+cd udescmaker
 npm install
 npm run dev
 ```

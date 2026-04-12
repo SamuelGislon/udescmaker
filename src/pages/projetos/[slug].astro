@@ -6,6 +6,7 @@ import CartaoProjetoCompacto from '../../components/astro/CartaoProjetoCompacto.
 import ListaMetadadosProjeto from '../../components/astro/ListaMetadadosProjeto.astro';
 import { GaleriaProjeto } from '../../components/react/GaleriaProjeto';
 import { Icon } from '../../components/react/Icon';
+import { MAPA_CATEGORIA } from '../../data/taxonomia';
 import { buscarProjetoPorSlug, listarTodosProjetos } from '../../lib/projetos';
 import { comCaminhoBase } from '../../lib/site';
 
@@ -55,8 +56,11 @@ const iconeDicaPorTom = {
         <p class="project-detail__lede">{projeto.resumo}</p>
 
         <div class="project-detail__chips">
-          {projeto.categoriasLabel.map((rotuloCategoria) => (
-            <span class="category-pill">{rotuloCategoria}</span>
+          {projeto.categorias.map((categoria) => (
+            <span class="category-pill" title={MAPA_CATEGORIA[categoria].label}>
+              <Icon name={MAPA_CATEGORIA[categoria].icon} size={15} />
+              {MAPA_CATEGORIA[categoria].label}
+            </span>
           ))}
         </div>
 
@@ -66,7 +70,9 @@ const iconeDicaPorTom = {
           ))}
         </div>
 
-        <ListaMetadadosProjeto projeto={projeto} />
+        <div class="project-detail__meta-shell">
+          <ListaMetadadosProjeto projeto={projeto} />
+        </div>
 
         <div class="project-detail__actions">
           {primeiroBaixavel ? (
@@ -85,14 +91,16 @@ const iconeDicaPorTom = {
       </div>
     </section>
 
-    <section class="project-detail__body">
-      <div class="project-detail__main-column">
-        <SecaoMarkdown titulo="Sobre o projeto">
-          <div class="prose">
-            <Content />
-          </div>
-        </SecaoMarkdown>
+    <section class="project-detail__full-section">
+      <SecaoMarkdown titulo="Sobre o projeto">
+        <div class="prose">
+          <Content />
+        </div>
+      </SecaoMarkdown>
+    </section>
 
+    <section class="project-detail__body">
+      <div class="project-detail__left-column">
         <SecaoMarkdown titulo="Materiais">
           <ul class="bullet-list">
             {projeto.materiais.map((material) => (
@@ -110,7 +118,7 @@ const iconeDicaPorTom = {
         </SecaoMarkdown>
       </div>
 
-      <div class="project-detail__side-column">
+      <div class="project-detail__center-column">
         <SecaoMarkdown titulo="Passo a passo">
           <div class="steps-list">
             {projeto.passos.map((passo, indice) => (
@@ -125,7 +133,9 @@ const iconeDicaPorTom = {
             ))}
           </div>
         </SecaoMarkdown>
+      </div>
 
+      <div class="project-detail__right-column">
         <SecaoMarkdown titulo="Dicas e cuidados">
           <div class="tips-list">
             {projeto.dicas.map((dica) => (
@@ -141,7 +151,6 @@ const iconeDicaPorTom = {
           <SecaoMarkdown
             id="arquivos-complementares"
             titulo="Arquivos complementares"
-            introducao="Baixe moldes, manuais, modelos 3D ou outros anexos enviados junto com o projeto."
           >
             <div class="file-grid">
               {projeto.baixaveis.map((item) => (

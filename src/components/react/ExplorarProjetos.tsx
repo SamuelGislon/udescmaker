@@ -5,7 +5,6 @@ import {
   OPCOES_DIFICULDADE,
   OPCOES_DURACAO,
   OPCOES_IDADE,
-  OPCOES_ORDENACAO,
   correspondeFaixaDuracao,
   type CategoriaProjeto,
   type DificuldadeProjeto,
@@ -53,6 +52,10 @@ function alternarItemLista<T extends string>(listaAtual: T[], valor: T) {
 
 function formatarTotalResultados(total: number) {
   return `${total} projeto${total === 1 ? '' : 's'} encontrado${total === 1 ? '' : 's'}`;
+}
+
+function formatarFaixaEtaria(idade: number) {
+  return `${idade}+`;
 }
 
 export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjetosProps) {
@@ -186,11 +189,111 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
         </div>
 
         <div className="filters-panel__group">
+          <h3>Idade mínima</h3>
+          <div className="choice-row choice-row--compact" role="group" aria-label="Filtrar por idade mínima">
+            <button
+              className={`choice-chip choice-chip--filter choice-chip--compact ${
+                filtrosRascunho.idadeMinima === null ? 'is-active' : ''
+              }`}
+              onClick={() =>
+                setFiltrosRascunho((atual) => ({
+                  ...atual,
+                  idadeMinima: null
+                }))
+              }
+              type="button"
+            >
+              Todas
+            </button>
+            {OPCOES_IDADE.map((idade) => (
+              <button
+                className={`choice-chip choice-chip--filter choice-chip--compact ${
+                  filtrosRascunho.idadeMinima === idade ? 'is-active' : ''
+                }`}
+                key={idade}
+                onClick={() =>
+                  setFiltrosRascunho((atual) => ({
+                    ...atual,
+                    idadeMinima: idade
+                  }))
+                }
+                type="button"
+              >
+                {formatarFaixaEtaria(idade)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="filters-panel__group">
+          <h3>Nível de dificuldade</h3>
+          <div
+            className="choice-row choice-row--fill"
+            role="group"
+            aria-label="Filtrar por nível de dificuldade"
+          >
+            {OPCOES_DIFICULDADE.map((dificuldade) => (
+              <button
+                className={`choice-chip choice-chip--filter choice-chip--wide ${
+                  filtrosRascunho.dificuldades.includes(dificuldade.id) ? 'is-active' : ''
+                }`}
+                key={dificuldade.id}
+                onClick={() =>
+                  setFiltrosRascunho((atual) => ({
+                    ...atual,
+                    dificuldades: alternarItemLista(atual.dificuldades, dificuldade.id)
+                  }))
+                }
+                type="button"
+              >
+                {dificuldade.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="filters-panel__group">
+          <h3>Tempo necessário</h3>
+          <div className="radio-list radio-list--inline" role="radiogroup" aria-label="Filtrar por tempo necessário">
+            {OPCOES_DURACAO.map((duracao) => (
+              <label className="radio-list__item" key={duracao.id}>
+                <input
+                  checked={filtrosRascunho.duracao === duracao.id}
+                  name="duracao"
+                  onChange={() =>
+                    setFiltrosRascunho((atual) => ({
+                      ...atual,
+                      duracao: duracao.id
+                    }))
+                  }
+                  type="radio"
+                />
+                <span>{duracao.label}</span>
+              </label>
+            ))}
+            <label className="radio-list__item">
+              <input
+                checked={filtrosRascunho.duracao === null}
+                name="duracao"
+                onChange={() =>
+                  setFiltrosRascunho((atual) => ({
+                    ...atual,
+                    duracao: null
+                  }))
+                }
+                type="radio"
+              />
+              <span>Todos</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="filters-panel__group">
           <h3>Categorias</h3>
           <div className="choice-grid choice-grid--categories">
             {categoriasVisiveis.map((categoria) => (
               <button
-                className={`choice-chip choice-chip--wide ${
+                className={`choice-chip choice-chip--filter ${
                   filtrosRascunho.categorias.includes(categoria.id) ? 'is-active' : ''
                 }`}
                 key={categoria.id}
@@ -210,17 +313,10 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
 
           <button
             type="button"
-            style={{
-              marginTop: '10px',
-              background: 'none',
-              border: 'none',
-              color: '#1f7a4c',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
+            className="choice-chip choice-chip--filter choice-chip--toggle"
             onClick={() => setMostrarTodasCategorias((prev) => !prev)}
           >
-            {mostrarTodasCategorias ? 'Ver menos categorias' : 'Ver mais categorias'}
+            {mostrarTodasCategorias ? 'Menos categorias' : 'Mais categorias'}
           </button>
         </div>
 
