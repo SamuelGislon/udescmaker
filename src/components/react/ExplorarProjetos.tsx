@@ -5,6 +5,7 @@ import {
   OPCOES_DIFICULDADE,
   OPCOES_DURACAO,
   OPCOES_IDADE,
+  OPCOES_ORDENACAO,
   correspondeFaixaDuracao,
   type CategoriaProjeto,
   type DificuldadeProjeto,
@@ -56,6 +57,18 @@ function formatarTotalResultados(total: number) {
 
 function formatarFaixaEtaria(idade: number) {
   return `${idade}+`;
+}
+
+function prioridadeDificuldade(dificuldade: DificuldadeProjeto) {
+  if (dificuldade === 'iniciante') {
+    return 0;
+  }
+
+  if (dificuldade === 'intermediario') {
+    return 1;
+  }
+
+  return 2;
 }
 
 export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjetosProps) {
@@ -113,12 +126,12 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
         : true
     )
     .sort((esquerda, direita) => {
-      if (filtrosAplicados.ordenarPor === 'titulo') {
-        return esquerda.titulo.localeCompare(direita.titulo, 'pt-BR');
-      }
-
       if (filtrosAplicados.ordenarPor === 'duracao') {
         return esquerda.duracaoMinutos - direita.duracaoMinutos;
+      }
+
+      if (filtrosAplicados.ordenarPor === 'dificuldade') {
+        return prioridadeDificuldade(esquerda.dificuldade) - prioridadeDificuldade(direita.dificuldade);
       }
 
       return direita.publicadoEmISO.localeCompare(esquerda.publicadoEmISO);
@@ -333,6 +346,25 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
       <section className="results-panel">
         <div className="results-panel__topbar">
           <p>{totalResultadosLabel}</p>
+          <label className="results-panel__sort" htmlFor="ordenarPor">
+            <span>Ordenar por</span>
+            <select
+              id="ordenarPor"
+              onChange={(event) =>
+                setFiltrosAplicados((atual) => ({
+                  ...atual,
+                  ordenarPor: event.target.value as OpcaoOrdenacao
+                }))
+              }
+              value={filtrosAplicados.ordenarPor}
+            >
+              {OPCOES_ORDENACAO.map((opcao) => (
+                <option key={opcao.id} value={opcao.id}>
+                  {opcao.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         <div className="project-grid project-grid--explore">

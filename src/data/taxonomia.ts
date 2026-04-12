@@ -60,8 +60,8 @@ export type OpcaoDuracao = (typeof OPCOES_DURACAO)[number]['id'];
 
 export const OPCOES_ORDENACAO = [
   { id: 'recentes', label: 'Mais recentes' },
-  { id: 'titulo', label: 'Título (A-Z)' },
-  { id: 'duracao', label: 'Menor duração' }
+  { id: 'duracao', label: 'Mais rápidos' },
+  { id: 'dificuldade', label: 'Mais fáceis' }
 ] as const;
 
 export type OpcaoOrdenacao = (typeof OPCOES_ORDENACAO)[number]['id'];
