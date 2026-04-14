@@ -63,7 +63,7 @@ const colecaoProjetos = defineCollection({
           z.object({
             rotulo: z.string().min(3),
             arquivo: z.string().min(4),
-            tipo: z.enum(['stl', 'jpg', 'png', 'svg', 'zip', 'other']).default('other')
+            tipo: z.enum(['stl', 'jpg', 'png', 'svg', 'zip', 'xlsx', 'other']).default('other')
           })
         )
         .default([]),

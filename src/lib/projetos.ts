@@ -12,7 +12,7 @@ import { comCaminhoBase } from './site';
 
 type EntradaProjeto = CollectionEntry<'projects'>;
 
-const modulosArquivosProjeto = import.meta.glob('../content/projects/**/*.{pdf,stl,zip,svg,png,jpg,jpeg,webp,avif}', {
+const modulosArquivosProjeto = import.meta.glob('../content/projects/**/*.{pdf,stl,zip,svg,png,jpg,jpeg,webp,avif,xlsx}', {
   eager: true,
   import: 'default',
   query: '?url'
