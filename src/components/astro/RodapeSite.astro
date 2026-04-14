@@ -1,13 +1,123 @@
-<footer class="site-footer">
-  <div>
-    <strong>UDESC Maker</strong>
-    <p>
-      Uma vitrine colaborativa para compartilhar tutoriais maker em Markdown, versionados no GitHub
-      e publicados automaticamente no GitHub Pages.
-    </p>
+---
+import MarcaSite from './MarcaSite.astro';
+import { comCaminhoBase } from '../../lib/site';
+
+const hrefInicio = comCaminhoBase('/');
+const anoAtual = new Date().getFullYear();
+
+const githubLinks = [
+  {
+    nome: 'Samuel Gislon',
+    rotulo: '@SamuelGislon',
+    href: 'https://github.com/SamuelGislon'
+  },
+  {
+    nome: 'Breno',
+    rotulo: '@brenot0',
+    href: 'https://github.com/brenot0'
+  },
+  {
+    nome: 'Nicoli Zda Silva',
+    rotulo: '@NicoliZdaSilva',
+    href: 'https://github.com/NicoliZdaSilva'
+  }
+];
+---
+
+<footer class="site-footer" aria-labelledby="site-footer-title">
+  <div class="site-footer__shell">
+    <div class="site-footer__inner">
+
+      <div class="site-footer__grid">
+        <section class="site-footer__brand-column" aria-labelledby="site-footer-title">
+          <a
+            class="site-footer__brand-link"
+            href={hrefInicio}
+            aria-label="Voltar para a pagina inicial do UDESC Maker"
+          >
+            <MarcaSite />
+          </a>
+          <p id="site-footer-title" class="site-footer__summary">
+            O UDESCMAKER conecta projetos, pessoas e experiencias de aprendizagem pratica com uma
+            linguagem mais contemporanea, sem perder o clima academico e institucional da UDESC.
+          </p>
+        </section>
+
+        <section class="site-footer__section" aria-labelledby="site-footer-address-title">
+          <h2 class="site-footer__heading" id="site-footer-address-title">Endereco</h2>
+          <address class="site-footer__address">
+            <span>R. Dr. Getulio Vargas, 2822</span>
+            <span>Bela Vista, Ibirama / SC</span>
+            <span>CEP: 89140-000</span>
+          </address>
+
+          <a
+            class="site-footer__portal-link"
+            href="https://www.udesc.br/ceavi/mapadoportal"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="site-footer__portal-copy">
+              <span class="site-footer__portal-label">Mapa do Portal</span>
+              <span class="site-footer__portal-note">Acesse o portal institucional do CEAVI</span>
+            </span>
+            <span class="site-footer__portal-arrow" aria-hidden="true">↗</span>
+          </a>
+        </section>
+
+        <section class="site-footer__section" aria-labelledby="site-footer-contact-title">
+          <h2 class="site-footer__heading" id="site-footer-contact-title">Contato</h2>
+          <div class="site-footer__text-block">
+            <p>Telefone: (47) 3357-8484</p>
+            <p>
+              E-mail:
+              <a href="mailto:comunicacao.ceavi@udesc.br">comunicacao.ceavi@udesc.br</a>
+            </p>
+            <p>Horario de atendimento: 07h30 as 19h</p>
+          </div>
+        </section>
+
+        <section class="site-footer__section" aria-labelledby="site-footer-social-title">
+          <h2 class="site-footer__heading" id="site-footer-social-title">Desenvolvedores</h2>
+          <p class="site-footer__meta">
+            GitHub
+          </p>
+
+          <ul class="site-footer__social-list" aria-label="Perfis dos desenvolvedores no GitHub">
+            {
+              githubLinks.map((item) => (
+                <li>
+                  <a
+                    class="site-footer__social-link"
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Abrir GitHub de ${item.nome}`}
+                  >
+                    <span class="site-footer__social-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path
+                          d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.67.35-1.12.63-1.37-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.74-.1-.26-.45-1.3.1-2.7 0 0 .84-.27 2.75 1.05A9.32 9.32 0 0 1 12 6.84c.85 0 1.71.12 2.51.35 1.91-1.32 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.71 1.03 1.62 1.03 2.74 0 3.95-2.33 4.82-4.56 5.08.36.31.68.92.68 1.86 0 1.34-.01 2.42-.01 2.75 0 .27.18.59.69.49A10.31 10.31 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    </span>
+                    <span class="site-footer__social-copy">
+                      <strong>{item.nome}</strong>
+                      <span>{item.rotulo}</span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p>UDESCMAKER • CEAVI / UDESC • Ibirama / SC</p>
+        <p>&copy; {anoAtual} UDESCMAKER</p>
+      </div>
+    </div>
   </div>
-  <p class="site-footer__hint">
-    Para contribuir, adicione um novo diretório em <code>src/content/projects</code> e abra um PR
-    com o seu projeto.
-  </p>
 </footer>
