@@ -28,7 +28,9 @@ if (!projeto) {
 const { Content } = await render(projeto.entrada);
 const hrefProjetos = comCaminhoBase('/projetos/');
 const primeiroBaixavel = projeto.baixaveis[0];
+const temDicas = projeto.dicas.length > 0;
 const temArquivosComplementares = projeto.baixaveis.length > 0 || projeto.arquivos.length > 0;
+const projetosRelacionados = projeto.projetosRelacionados.slice(0, 3);
 const iconeDicaPorTom = {
   info: 'lightbulb',
   warning: 'alert',
@@ -100,25 +102,76 @@ const iconeDicaPorTom = {
     </section>
 
     <section class="project-detail__body">
-      <div class="project-detail__left-column">
-        <SecaoMarkdown titulo="Materiais">
-          <ul class="bullet-list">
-            {projeto.materiais.map((material) => (
-              <li>{material}</li>
-            ))}
-          </ul>
-        </SecaoMarkdown>
+      <div
+        class={`project-detail__top-grid ${
+          temDicas && temArquivosComplementares
+            ? 'project-detail__top-grid--three'
+            : temDicas || temArquivosComplementares
+              ? 'project-detail__top-grid--two'
+              : 'project-detail__top-grid--single'
+        }`}
+      >
+        <div class="project-detail__materials-column">
+          <div class="project-detail__materials-grid">
+            <SecaoMarkdown titulo="Materiais">
+              <ul class="bullet-list">
+                {projeto.materiais.map((material) => (
+                  <li>{material}</li>
+                ))}
+              </ul>
+            </SecaoMarkdown>
 
-        <SecaoMarkdown titulo="Ferramentas">
-          <ul class="bullet-list">
-            {projeto.ferramentas.map((ferramenta) => (
-              <li>{ferramenta}</li>
-            ))}
-          </ul>
-        </SecaoMarkdown>
+            <SecaoMarkdown titulo="Ferramentas">
+              <ul class="bullet-list">
+                {projeto.ferramentas.map((ferramenta) => (
+                  <li>{ferramenta}</li>
+                ))}
+              </ul>
+            </SecaoMarkdown>
+          </div>
+        </div>
+
+        {temDicas ? (
+          <div class="project-detail__tips-column">
+            <SecaoMarkdown titulo="Dicas e cuidados">
+              <div class="tips-list">
+                {projeto.dicas.map((dica) => (
+                  <article class={`tip-card tip-card--${dica.tom}`}>
+                    <Icon name={iconeDicaPorTom[dica.tom]} size={18} />
+                    <p>{dica.texto}</p>
+                  </article>
+                ))}
+              </div>
+            </SecaoMarkdown>
+          </div>
+        ) : null}
+
+        {temArquivosComplementares ? (
+          <div class="project-detail__files-column">
+            <SecaoMarkdown
+              id="arquivos-complementares"
+              titulo="Arquivos complementares"
+            >
+              <div class="file-grid">
+                {projeto.baixaveis.map((item) => (
+                  <a class="file-chip" href={item.url}>
+                    <span class="file-chip__badge">{item.tipo.toUpperCase()}</span>
+                    <strong>{item.rotulo}</strong>
+                  </a>
+                ))}
+                {projeto.arquivos.map((item) => (
+                  <a class="file-chip" href={item.url}>
+                    <span class="file-chip__badge">{item.tipo.toUpperCase()}</span>
+                    <strong>{item.rotulo}</strong>
+                  </a>
+                ))}
+              </div>
+            </SecaoMarkdown>
+          </div>
+        ) : null}
       </div>
 
-      <div class="project-detail__center-column">
+      <div class="project-detail__steps-section">
         <SecaoMarkdown titulo="Passo a passo">
           <div class="steps-list">
             {projeto.passos.map((passo, indice) => (
@@ -135,48 +188,17 @@ const iconeDicaPorTom = {
         </SecaoMarkdown>
       </div>
 
-      <div class="project-detail__right-column">
-        <SecaoMarkdown titulo="Dicas e cuidados">
-          <div class="tips-list">
-            {projeto.dicas.map((dica) => (
-              <article class={`tip-card tip-card--${dica.tom}`}>
-                <Icon name={iconeDicaPorTom[dica.tom]} size={18} />
-                <p>{dica.texto}</p>
-              </article>
-            ))}
-          </div>
-        </SecaoMarkdown>
-
-        {temArquivosComplementares ? (
-          <SecaoMarkdown
-            id="arquivos-complementares"
-            titulo="Arquivos complementares"
-          >
-            <div class="file-grid">
-              {projeto.baixaveis.map((item) => (
-                <a class="file-chip" href={item.url}>
-                  <span class="file-chip__badge">{item.tipo.toUpperCase()}</span>
-                  <strong>{item.rotulo}</strong>
-                </a>
-              ))}
-              {projeto.arquivos.map((item) => (
-                <a class="file-chip" href={item.url}>
-                  <span class="file-chip__badge">{item.tipo.toUpperCase()}</span>
-                  <strong>{item.rotulo}</strong>
-                </a>
+      {projetosRelacionados.length > 0 ? (
+        <div class="project-detail__related-section">
+          <SecaoMarkdown titulo="Projetos relacionados">
+            <div class="related-grid">
+              {projetosRelacionados.map((projetoRelacionado) => (
+                <CartaoProjetoCompacto projeto={projetoRelacionado} />
               ))}
             </div>
           </SecaoMarkdown>
-        ) : null}
-
-        <SecaoMarkdown titulo="Projetos relacionados">
-          <div class="related-grid">
-            {projeto.projetosRelacionados.map((projetoRelacionado) => (
-              <CartaoProjetoCompacto projeto={projetoRelacionado} />
-            ))}
-          </div>
-        </SecaoMarkdown>
-      </div>
+        </div>
+      ) : null}
     </section>
   </div>
 </LayoutBase>

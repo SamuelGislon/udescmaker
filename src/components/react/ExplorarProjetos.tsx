@@ -163,174 +163,180 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
   return (
     <div className="explore-layout">
       <aside className="filters-panel">
-        <div className="filters-panel__header">
-          <h2>Buscar projeto</h2>
-        </div>
+        <div className="filters-panel__body">
+          <div className="filters-panel__group">
+            <label className="filters-panel__label" htmlFor="textoBusca">
+              Busque por título, tags ou conteúdo
+            </label>
+            <div className="filters-panel__search">
+              <Icon name="search" size={18} />
+              <input
+                id="textoBusca"
+                onChange={(event) =>
+                  setFiltrosRascunho((atual) => ({ ...atual, textoBusca: event.target.value }))
+                }
+                placeholder="Busque por título, tags ou conteúdo"
+                type="search"
+                value={filtrosRascunho.textoBusca}
+              />
+            </div>
+          </div>
 
-        <div className="filters-panel__group">
-          <label className="filters-panel__label" htmlFor="textoBusca">
-            Busque por título, tags ou conteúdo
-          </label>
-          <div className="filters-panel__search">
-            <Icon name="search" size={18} />
+          <div className="filters-panel__group">
+            <label className="filters-panel__label" htmlFor="termosTag">
+              Tags ou palavras-chave
+            </label>
             <input
-              id="textoBusca"
+              className="filters-panel__input"
+              id="termosTag"
               onChange={(event) =>
-                setFiltrosRascunho((atual) => ({ ...atual, textoBusca: event.target.value }))
+                setFiltrosRascunho((atual) => ({ ...atual, termosTag: event.target.value }))
               }
-              placeholder="Busque por título, tags ou conteúdo"
-              type="search"
-              value={filtrosRascunho.textoBusca}
+              placeholder="Digite palavras-chave separadas por vírgula"
+              type="text"
+              value={filtrosRascunho.termosTag}
             />
           </div>
-        </div>
 
-        <div className="filters-panel__group">
-          <label className="filters-panel__label" htmlFor="termosTag">
-            Tags ou palavras-chave
-          </label>
-          <input
-            className="filters-panel__input"
-            id="termosTag"
-            onChange={(event) =>
-              setFiltrosRascunho((atual) => ({ ...atual, termosTag: event.target.value }))
-            }
-            placeholder="Digite palavras-chave separadas por vírgula"
-            type="text"
-            value={filtrosRascunho.termosTag}
-          />
-        </div>
-
-        <div className="filters-panel__group">
-          <h3>Idade mínima</h3>
-          <div className="choice-row choice-row--compact" role="group" aria-label="Filtrar por idade mínima">
-            <button
-              className={`choice-chip choice-chip--filter choice-chip--compact ${
-                filtrosRascunho.idadeMinima === null ? 'is-active' : ''
-              }`}
-              onClick={() =>
-                setFiltrosRascunho((atual) => ({
-                  ...atual,
-                  idadeMinima: null
-                }))
-              }
-              type="button"
+          <div className="filters-panel__group filters-panel__group--age">
+            <h3>Idade mínima</h3>
+            <div
+              className="choice-row choice-row--compact"
+              role="group"
+              aria-label="Filtrar por idade mínima"
             >
-              Todas
-            </button>
-            {OPCOES_IDADE.map((idade) => (
               <button
                 className={`choice-chip choice-chip--filter choice-chip--compact ${
-                  filtrosRascunho.idadeMinima === idade ? 'is-active' : ''
+                  filtrosRascunho.idadeMinima === null ? 'is-active' : ''
                 }`}
-                key={idade}
                 onClick={() =>
                   setFiltrosRascunho((atual) => ({
                     ...atual,
-                    idadeMinima: idade
+                    idadeMinima: null
                   }))
                 }
                 type="button"
               >
-                {formatarFaixaEtaria(idade)}
+                Todas
               </button>
-            ))}
+              {OPCOES_IDADE.map((idade) => (
+                <button
+                  className={`choice-chip choice-chip--filter choice-chip--compact ${
+                    filtrosRascunho.idadeMinima === idade ? 'is-active' : ''
+                  }`}
+                  key={idade}
+                  onClick={() =>
+                    setFiltrosRascunho((atual) => ({
+                      ...atual,
+                      idadeMinima: idade
+                    }))
+                  }
+                  type="button"
+                >
+                  {formatarFaixaEtaria(idade)}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="filters-panel__group">
-          <h3>Nível de dificuldade</h3>
-          <div
-            className="choice-row choice-row--fill"
-            role="group"
-            aria-label="Filtrar por nível de dificuldade"
-          >
-            {OPCOES_DIFICULDADE.map((dificuldade) => (
-              <button
-                className={`choice-chip choice-chip--filter choice-chip--wide ${
-                  filtrosRascunho.dificuldades.includes(dificuldade.id) ? 'is-active' : ''
-                }`}
-                key={dificuldade.id}
-                onClick={() =>
-                  setFiltrosRascunho((atual) => ({
-                    ...atual,
-                    dificuldades: alternarItemLista(atual.dificuldades, dificuldade.id)
-                  }))
-                }
-                type="button"
-              >
-                {dificuldade.label}
-              </button>
-            ))}
+          <div className="filters-panel__group">
+            <h3>Nível de dificuldade</h3>
+            <div
+              className="choice-row choice-row--fill"
+              role="group"
+              aria-label="Filtrar por nível de dificuldade"
+            >
+              {OPCOES_DIFICULDADE.map((dificuldade) => (
+                <button
+                  className={`choice-chip choice-chip--filter choice-chip--wide ${
+                    filtrosRascunho.dificuldades.includes(dificuldade.id) ? 'is-active' : ''
+                  }`}
+                  key={dificuldade.id}
+                  onClick={() =>
+                    setFiltrosRascunho((atual) => ({
+                      ...atual,
+                      dificuldades: alternarItemLista(atual.dificuldades, dificuldade.id)
+                    }))
+                  }
+                  type="button"
+                >
+                  {dificuldade.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="filters-panel__group">
-          <h3>Tempo necessário</h3>
-          <div className="radio-list radio-list--inline" role="radiogroup" aria-label="Filtrar por tempo necessário">
-            {OPCOES_DURACAO.map((duracao) => (
-              <label className="radio-list__item" key={duracao.id}>
+          <div className="filters-panel__group filters-panel__group--duration">
+            <h3>Tempo necessário</h3>
+            <div
+              className="radio-list radio-list--inline radio-list--duration"
+              role="radiogroup"
+              aria-label="Filtrar por tempo necessário"
+            >
+              <label className="radio-list__item">
                 <input
-                  checked={filtrosRascunho.duracao === duracao.id}
+                  checked={filtrosRascunho.duracao === null}
                   name="duracao"
                   onChange={() =>
                     setFiltrosRascunho((atual) => ({
                       ...atual,
-                      duracao: duracao.id
+                      duracao: null
                     }))
                   }
                   type="radio"
                 />
-                <span>{duracao.label}</span>
+                <span>Todos</span>
               </label>
-            ))}
-            <label className="radio-list__item">
-              <input
-                checked={filtrosRascunho.duracao === null}
-                name="duracao"
-                onChange={() =>
-                  setFiltrosRascunho((atual) => ({
-                    ...atual,
-                    duracao: null
-                  }))
-                }
-                type="radio"
-              />
-              <span>Todos</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="filters-panel__group">
-          <h3>Categorias</h3>
-          <div className="choice-grid choice-grid--categories">
-            {categoriasVisiveis.map((categoria) => (
-              <button
-                className={`choice-chip choice-chip--filter ${
-                  filtrosRascunho.categorias.includes(categoria.id) ? 'is-active' : ''
-                }`}
-                key={categoria.id}
-                onClick={() =>
-                  setFiltrosRascunho((atual) => ({
-                    ...atual,
-                    categorias: alternarItemLista(atual.categorias, categoria.id)
-                  }))
-                }
-                type="button"
-              >
-                <Icon name={categoria.icon} size={16} />
-                {categoria.label}
-              </button>
-            ))}
+              {OPCOES_DURACAO.map((duracao) => (
+                <label className="radio-list__item" key={duracao.id}>
+                  <input
+                    checked={filtrosRascunho.duracao === duracao.id}
+                    name="duracao"
+                    onChange={() =>
+                      setFiltrosRascunho((atual) => ({
+                        ...atual,
+                        duracao: duracao.id
+                      }))
+                    }
+                    type="radio"
+                  />
+                  <span>{duracao.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="choice-chip choice-chip--filter choice-chip--toggle"
-            onClick={() => setMostrarTodasCategorias((prev) => !prev)}
-          >
-            {mostrarTodasCategorias ? 'Menos categorias' : 'Mais categorias'}
-          </button>
+          <div className="filters-panel__group filters-panel__group--categories">
+            <h3>Categorias</h3>
+            <div className="choice-grid choice-grid--categories">
+              {categoriasVisiveis.map((categoria) => (
+                <button
+                  className={`choice-chip choice-chip--filter ${
+                    filtrosRascunho.categorias.includes(categoria.id) ? 'is-active' : ''
+                  }`}
+                  key={categoria.id}
+                  onClick={() =>
+                    setFiltrosRascunho((atual) => ({
+                      ...atual,
+                      categorias: alternarItemLista(atual.categorias, categoria.id)
+                    }))
+                  }
+                  type="button"
+                >
+                  <Icon name={categoria.icon} size={16} />
+                  {categoria.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="choice-chip choice-chip--filter choice-chip--toggle"
+              onClick={() => setMostrarTodasCategorias((prev) => !prev)}
+            >
+              {mostrarTodasCategorias ? 'Menos categorias' : 'Mais categorias'}
+            </button>
+          </div>
         </div>
 
         <div className="filters-panel__actions">

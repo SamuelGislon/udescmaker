@@ -1,4 +1,5 @@
 ---
+import { CategoriasProjeto } from '../react/CategoriasProjeto';
 import { Icon } from '../react/Icon';
 import { MAPA_CATEGORIA } from '../../data/taxonomia';
 import type { DadosCartaoProjeto } from '../../lib/projetos';
@@ -8,6 +9,11 @@ interface Props {
 }
 
 const { projeto } = Astro.props;
+const categorias = projeto.categorias.map((categoria, indice) => ({
+  id: categoria,
+  icon: MAPA_CATEGORIA[categoria].icon,
+  label: projeto.categoriasLabel[indice] ?? MAPA_CATEGORIA[categoria].label
+}));
 ---
 
 <article class="project-card project-card--compact">
@@ -16,14 +22,7 @@ const { projeto } = Astro.props;
   </a>
   <div class="project-card__body">
     <div class="project-card__eyebrow project-card__eyebrow--stacked">
-      <div class="project-card__categories" aria-label="Categorias do projeto">
-        {projeto.categorias.map((categoria) => (
-          <span class="category-pill category-pill--muted">
-            <Icon name={MAPA_CATEGORIA[categoria].icon} size={15} />
-            {MAPA_CATEGORIA[categoria].label}
-          </span>
-        ))}
-      </div>
+      <CategoriasProjeto client:load categorias={categorias} />
       <span class="project-card__date">{projeto.publicadoEmLabel}</span>
     </div>
     <div class="project-card__content">

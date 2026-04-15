@@ -1,5 +1,6 @@
 import type { DadosBuscaProjeto } from '../../lib/projetos';
 import { MAPA_CATEGORIA } from '../../data/taxonomia';
+import { CategoriasProjeto } from './CategoriasProjeto';
 import { Icon } from './Icon';
 
 interface CartaoProjetoProps {
@@ -7,6 +8,12 @@ interface CartaoProjetoProps {
 }
 
 export function CartaoProjeto({ projeto }: CartaoProjetoProps) {
+  const categorias = projeto.categorias.map((categoria, indice) => ({
+    id: categoria,
+    icon: MAPA_CATEGORIA[categoria].icon,
+    label: projeto.categoriasLabel[indice] ?? MAPA_CATEGORIA[categoria].label
+  }));
+
   return (
     <article className="project-card project-card--interactive">
       <a className="project-card__image-link" href={projeto.href}>
@@ -14,14 +21,7 @@ export function CartaoProjeto({ projeto }: CartaoProjetoProps) {
       </a>
       <div className="project-card__body">
         <div className="project-card__eyebrow project-card__eyebrow--stacked">
-          <div className="project-card__categories" aria-label="Categorias do projeto">
-            {projeto.categorias.map((categoria) => (
-              <span className="category-pill category-pill--muted" key={categoria}>
-                <Icon name={MAPA_CATEGORIA[categoria].icon} size={15} />
-                {MAPA_CATEGORIA[categoria].label}
-              </span>
-            ))}
-          </div>
+          <CategoriasProjeto categorias={categorias} />
           <span className="category-pill category-pill--muted">
             <Icon name="sparkles" size={15} />
             {projeto.dificuldadeLabel}
