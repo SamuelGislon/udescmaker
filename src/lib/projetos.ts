@@ -79,8 +79,8 @@ export interface DadosDetalheProjeto extends DadosCartaoProjeto {
 
 export type DadosBuscaProjeto = Omit<DadosCartaoProjeto, 'destaque'>;
 
-function removerMarkdown(textoMarkdown: string) {
-  return textoMarkdown
+function removerMarkdown(textoMarkdown?: string) {
+  return (textoMarkdown ?? '')
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`([^`]+)`/g, '$1')
     .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
