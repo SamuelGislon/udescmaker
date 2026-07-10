@@ -12,11 +12,14 @@ import { comCaminhoBase } from './site';
 
 type EntradaProjeto = CollectionEntry<'projects'>;
 
-const modulosArquivosProjeto = import.meta.glob('../content/projects/**/*.{pdf,stl,zip,svg,png,jpg,jpeg,webp,avif,xlsx}', {
-  eager: true,
-  import: 'default',
-  query: '?url'
-});
+const modulosArquivosProjeto = import.meta.glob(
+  ['../content/projects/**/*', '!../content/projects/**/*.{md,mdx}'],
+  {
+    eager: true,
+    import: 'default',
+    query: '?url'
+  }
+);
 
 export interface LinkArquivoProjeto {
   rotulo: string;
@@ -62,6 +65,7 @@ export interface DadosCartaoProjeto {
 
 export interface DadosDetalheProjeto extends DadosCartaoProjeto {
   entrada: EntradaProjeto;
+  videoYoutube?: string;
   galeria: ItemGaleriaProjeto[];
   materiais: string[];
   ferramentas: string[];
@@ -175,6 +179,7 @@ function serializarProjeto(entrada: EntradaProjeto): DadosDetalheProjeto {
     destaque: entrada.data.destaque,
     textoBusca: montarTextoBusca(entrada),
     entrada,
+    videoYoutube: entrada.data.videoYoutube,
     galeria,
     materiais: entrada.data.materiais,
     ferramentas: entrada.data.ferramentas,
@@ -199,38 +204,63 @@ function serializarProjeto(entrada: EntradaProjeto): DadosDetalheProjeto {
   };
 }
 
-function pontuarProjetosRelacionados(atual: DadosDetalheProjeto, candidato: DadosDetalheProjeto) {
+function contarValoresComuns(valoresAtuais: readonly string[], valoresCandidatos: readonly string[]) {
+  const atuaisNormalizados = new Set(
+    valoresAtuais.map((valor) => valor.trim().toLowerCase()).filter(Boolean)
+  );
+  const candidatosNormalizados = new Set(
+    valoresCandidatos.map((valor) => valor.trim().toLowerCase()).filter(Boolean)
+  );
+
+  return [...candidatosNormalizados].filter((valor) => atuaisNormalizados.has(valor)).length;
+}
+
+export function pontuarProjetosRelacionados(
+  atual: DadosDetalheProjeto,
+  candidato: DadosDetalheProjeto
+) {
   if (atual.slug === candidato.slug) {
-    return -1;
+    return 0;
   }
 
-  const categoriasCompartilhadas = candidato.categorias.filter((categoria) =>
-    atual.categorias.includes(categoria)
-  ).length;
-  const tagsCompartilhadas = candidato.tags.filter((tag) => atual.tags.includes(tag)).length;
-  const pesoRecencia =
-    new Date(candidato.publicadoEmISO).getTime() / new Date('2026-01-01').getTime();
+  const categoriasCompartilhadas = contarValoresComuns(atual.categorias, candidato.categorias);
+  const tagsCompartilhadas = contarValoresComuns(atual.tags, candidato.tags);
 
-  return categoriasCompartilhadas * 10 + tagsCompartilhadas * 3 + pesoRecencia;
+  return categoriasCompartilhadas * 5 + tagsCompartilhadas * 3;
 }
 
 function anexarProjetosRelacionados(projetos: DadosDetalheProjeto[]) {
   return projetos.map((projeto) => {
-    const projetosRelacionados =
-      projeto.relacionadosConfigurados.length > 0
-        ? projeto.relacionadosConfigurados
-            .map((slug) => projetos.find((candidato) => candidato.slug === slug))
-            .filter((candidato): candidato is DadosDetalheProjeto => Boolean(candidato))
-            .map((candidato) => paraDadosCartao(candidato))
-        : projetos
-            .filter((candidato) => candidato.slug !== projeto.slug)
-            .map((candidato) => ({
-              candidato,
-              pontuacao: pontuarProjetosRelacionados(projeto, candidato)
-            }))
-            .sort((esquerda, direita) => direita.pontuacao - esquerda.pontuacao)
-            .slice(0, 3)
-            .map(({ candidato }) => paraDadosCartao(candidato));
+    const projetosRelacionados = projetos
+      .filter((candidato) => candidato.slug !== projeto.slug)
+      .map((candidato) => ({
+        candidato,
+        pontuacao: pontuarProjetosRelacionados(projeto, candidato)
+      }))
+      .filter(({ pontuacao }) => pontuacao > 0)
+      .sort((esquerda, direita) => {
+        const diferencaPontuacao = direita.pontuacao - esquerda.pontuacao;
+
+        if (diferencaPontuacao !== 0) {
+          return diferencaPontuacao;
+        }
+
+        const diferencaData = direita.candidato.publicadoEmISO.localeCompare(
+          esquerda.candidato.publicadoEmISO
+        );
+
+        if (diferencaData !== 0) {
+          return diferencaData;
+        }
+
+        if (esquerda.candidato.slug === direita.candidato.slug) {
+          return 0;
+        }
+
+        return esquerda.candidato.slug < direita.candidato.slug ? -1 : 1;
+      })
+      .slice(0, 3)
+      .map(({ candidato }) => paraDadosCartao(candidato));
 
     return {
       ...projeto,

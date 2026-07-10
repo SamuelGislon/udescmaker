@@ -153,9 +153,11 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
   }
 
   function limparFiltros() {
+    const estadoLimpo = criarEstadoInicialFiltros('');
+
     startTransition(() => {
-      setFiltrosRascunho(estadoInicial);
-      setFiltrosAplicados(estadoInicial);
+      setFiltrosRascunho(estadoLimpo);
+      setFiltrosAplicados(estadoLimpo);
       setQuantidadeVisivel(RESULTADOS_POR_LOTE);
     });
   }
@@ -351,16 +353,19 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
 
       <section className="results-panel">
         <div className="results-panel__topbar">
-          <p>{totalResultadosLabel}</p>
+          <p aria-live="polite">{totalResultadosLabel}</p>
           <label className="results-panel__sort" htmlFor="ordenarPor">
             <span>Ordenar por</span>
             <select
               id="ordenarPor"
               onChange={(event) =>
-                setFiltrosAplicados((atual) => ({
-                  ...atual,
-                  ordenarPor: event.target.value as OpcaoOrdenacao
-                }))
+                startTransition(() => {
+                  setFiltrosAplicados((atual) => ({
+                    ...atual,
+                    ordenarPor: event.target.value as OpcaoOrdenacao
+                  }));
+                  setQuantidadeVisivel(RESULTADOS_POR_LOTE);
+                })
               }
               value={filtrosAplicados.ordenarPor}
             >
@@ -373,11 +378,37 @@ export function ExplorarProjetos({ projetos, buscaInicial = '' }: ExplorarProjet
           </label>
         </div>
 
-        <div className="project-grid project-grid--explore">
-          {projetosVisiveis.map((projeto) => (
-            <CartaoProjeto key={projeto.slug} projeto={projeto} />
-          ))}
-        </div>
+        {projetosVisiveis.length > 0 ? (
+          <div className="project-grid project-grid--explore">
+            {projetosVisiveis.map((projeto) => (
+              <CartaoProjeto key={projeto.slug} projeto={projeto} />
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state" role="status">
+            <strong>Nenhum projeto encontrado.</strong>
+            <p>Tente outros termos ou remova alguns filtros para ampliar a busca.</p>
+            <button className="button button--ghost" onClick={limparFiltros} type="button">
+              Limpar filtros
+            </button>
+          </div>
+        )}
+
+        {haMais ? (
+          <div className="results-panel__footer">
+            <button
+              className="button button--ghost"
+              onClick={() =>
+                setQuantidadeVisivel((quantidadeAtual) =>
+                  quantidadeAtual + RESULTADOS_POR_LOTE
+                )
+              }
+              type="button"
+            >
+              Carregar mais projetos
+            </button>
+          </div>
+        ) : null}
       </section>
     </div>
   );

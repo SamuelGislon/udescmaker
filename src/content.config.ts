@@ -15,6 +15,7 @@ const colecaoProjetos = defineCollection({
       dificuldade: z.enum(IDS_DIFICULDADE),
       idadeMinima: z.number().int().min(0),
       duracaoMinutos: z.number().int().positive(),
+      videoYoutube: z.string().url().optional(),
       categorias: z.array(z.enum(IDS_CATEGORIA)).min(1),
       tags: z.array(z.string().min(2)).default([]),
       destaque: z.boolean().default(false),

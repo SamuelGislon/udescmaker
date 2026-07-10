@@ -9,6 +9,7 @@ import { Icon } from '../../components/react/Icon';
 import { MAPA_CATEGORIA } from '../../data/taxonomia';
 import { buscarProjetoPorSlug, listarTodosProjetos } from '../../lib/projetos';
 import { comCaminhoBase } from '../../lib/site';
+import { criarUrlEmbedYoutube } from '../../lib/youtube';
 
 export async function getStaticPaths() {
   const projetos = await listarTodosProjetos();
@@ -31,6 +32,7 @@ const primeiroBaixavel = projeto.baixaveis[0];
 const temDicas = projeto.dicas.length > 0;
 const temArquivosComplementares = projeto.baixaveis.length > 0 || projeto.arquivos.length > 0;
 const projetosRelacionados = projeto.projetosRelacionados.slice(0, 3);
+const videoYoutubeEmbedUrl = criarUrlEmbedYoutube(projeto.videoYoutube);
 const iconeDicaPorTom = {
   info: 'lightbulb',
   warning: 'alert',
@@ -78,9 +80,13 @@ const iconeDicaPorTom = {
 
         <div class="project-detail__actions">
           {primeiroBaixavel ? (
-            <a class="button button--cta" href={primeiroBaixavel.url}>
+            <a
+              aria-label={`Baixar ${primeiroBaixavel.rotulo}`}
+              class="button button--cta"
+              href={primeiroBaixavel.url}
+            >
               <Icon name="download" size={18} />
-              Baixar PDF
+              Baixar {primeiroBaixavel.tipo.toUpperCase()}
             </a>
           ) : null}
           {projeto.arquivos.length > 0 ? (
@@ -92,6 +98,23 @@ const iconeDicaPorTom = {
         </div>
       </div>
     </section>
+
+    {videoYoutubeEmbedUrl ? (
+      <section class="project-detail__video-section">
+        <SecaoMarkdown titulo="Vídeo do projeto">
+          <div class="project-video">
+            <iframe
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              src={videoYoutubeEmbedUrl}
+              title={`Vídeo do projeto ${projeto.titulo}`}
+            ></iframe>
+          </div>
+        </SecaoMarkdown>
+      </section>
+    ) : null}
 
     <section class="project-detail__full-section">
       <SecaoMarkdown titulo="Sobre o projeto">
